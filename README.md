@@ -6,12 +6,12 @@ remote SFTP location whenever you save a file locally.
 
 Example properties file:
 
-ssh.host=<your-host>
-ssh.password=<your-password>
-ssh.src.root=<the-local-root-path>
-ssh.port=<the SSH port, usually 22>
-ssh.username=<your-username>
-ssh.dest.root=<the-destination-root-path>
+	ssh.host=<your-host>
+	ssh.password=<your-password>
+	ssh.src.root=<the-local-root-path>
+	ssh.port=<the SSH port, usually 22>
+	ssh.username=<your-username>
+	ssh.dest.root=<the-destination-root-path>
 
 This file is stored in your home directory as "intellij-sftp.properties".
 
