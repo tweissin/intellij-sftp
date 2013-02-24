@@ -1,27 +1,18 @@
 package com.trw;
 
 import com.jcraft.jsch.*;
+import com.trw.com.trw.settings.ConfigSettingsHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
- * User: tweissin
- * Date: 2/23/13
- * Time: 9:53 PM
- * To change this template use File | Settings | File Templates.
+ * This is used to copy files to a remote destination using SFTP.
+ * @author
  */
 public class SshUtil {
     private static Logger LOGGER = new Logger();
-
-    public static final String USERNAME = "ssh.username";
-    public static final String PASSWORD = "ssh.password";
-    public static final String HOST = "ssh.host";
-    public static final String DEST_ROOT = "ssh.dest.root";
-    public static final String SRC_ROOT = "ssh.src.root";
-    public static final String PORT = "ssh.port";
 
     private String username;
     private String password;
@@ -32,12 +23,12 @@ public class SshUtil {
     private ChannelSftp sftp;
 
     public SshUtil(Properties props) {
-        username = props.getProperty(USERNAME);
-        password = props.getProperty(PASSWORD);
-        host = props.getProperty(HOST);
-        destRoot = props.getProperty(DEST_ROOT);
-        srcRoot = props.getProperty(SRC_ROOT);
-        port = Integer.valueOf(props.getProperty(PORT));
+        username = props.getProperty(ConfigSettingsHelper.USERNAME);
+        password = props.getProperty(ConfigSettingsHelper.PASSWORD);
+        host = props.getProperty(ConfigSettingsHelper.HOST);
+        destRoot = props.getProperty(ConfigSettingsHelper.DEST_ROOT);
+        srcRoot = props.getProperty(ConfigSettingsHelper.SRC_ROOT);
+        port = Integer.valueOf(props.getProperty(ConfigSettingsHelper.PORT));
         LOGGER.info("Initializing SshUtil");
         LOGGER.info("username: " + username);
         LOGGER.info("password: " + password);

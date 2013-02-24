@@ -35,16 +35,8 @@
   </project-components>
 
     <actions>
-        <group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">
-            <add-to-group group-id="MainMenu" anchor="last"  />
-            <action id="Myplugin.Textboxes" class="com.trw.TextBoxes" text="Text _Boxes" description="A test menu item" />
-        </group>
-
-        <action id="com.trw.MyAction" class="com.trw.MyAction" text="My_Item" description="The action....">
-            <add-to-group group-id="MainMenu" anchor="after" relative-to-action="WindowMenu"/>
-        </action>
     </actions>
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+      <applicationConfigurable implementation="com.trw.com.trw.settings.ConfigSettings"></applicationConfigurable>
   </extensions>
 </idea-plugin>

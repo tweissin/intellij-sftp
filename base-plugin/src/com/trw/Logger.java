@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * Created with IntelliJ IDEA.
- * User: tweissin
- * Date: 2/24/13
- * Time: 6:41 AM
- * To change this template use File | Settings | File Templates.
+ * This is a temporary logger until I can get log4j working
+ * @author
  */
 public class Logger {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Logger.class);

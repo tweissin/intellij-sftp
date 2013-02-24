@@ -9,12 +9,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
+import com.trw.com.trw.settings.ConfigSettingsHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -32,11 +30,13 @@ import java.util.Properties;
  *
  * also:
  * cp /Users/tweissin/source/intelliJ/tom-plugin/tom-plugin.jar "/Applications/IntelliJ IDEA 12 CE.app/plugins"
+ *
+ * @author tweissin
  */
 public class OnFileSaveComponent implements ApplicationComponent {
     private static Logger LOGGER = new Logger();
 
-    private SshUtil sshUtil;
+    private static SshUtil sshUtil;
 
     @NotNull
     public String getComponentName() {
@@ -44,19 +44,6 @@ public class OnFileSaveComponent implements ApplicationComponent {
     }
 
     public void initComponent() {
-        String propFile = System.getProperty("user.home") + "/intellij-sftp.properties";
-        try {
-            FileInputStream fis = new FileInputStream(propFile);
-            Properties props = new Properties();
-            props.load(fis);
-            sshUtil = new  SshUtil(props);
-        } catch (FileNotFoundException e) {
-            LOGGER.error("couldn't load properties file: " + propFile + ": " + e.getMessage());
-            return;
-        } catch (IOException e) {
-            LOGGER.error("couldn't load properties file: " + propFile + ": " + e.getMessage());
-            return;
-        }
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
         MessageBusConnection connection = bus.connect();
         connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC,
@@ -66,10 +53,36 @@ public class OnFileSaveComponent implements ApplicationComponent {
                         VirtualFile file = FileDocumentManager.getInstance().getFile(document);
                         ByteArrayInputStream is = new ByteArrayInputStream(document.getText().getBytes());
                         LOGGER.info("About to copy file using OnFileSaveComponent: " + file.getCanonicalPath());
-                        sshUtil.copyFile(is, file.getCanonicalPath());
-                        LOGGER.info("Successfully copied file: " + file.getCanonicalPath());
+                        sshUtil = getSshUtil();
+                        if(sshUtil!=null) {
+                            sshUtil.copyFile(is, file.getCanonicalPath());
+                            LOGGER.info("Successfully copied file: " + file.getCanonicalPath());
+                        } else {
+                            LOGGER.error("Couldn't copy file: " + file.getCanonicalPath());
+                        }
                     }
                 });
+    }
+
+    private SshUtil getSshUtil() {
+        if(sshUtil==null) {
+            Properties props = ConfigSettingsHelper.getConfigProperties();
+            if(props==null) {
+                LOGGER.error("Problem reading properties...");
+                return null;
+            }
+            sshUtil = new SshUtil(props);
+            return sshUtil;
+        }
+        return sshUtil;
+    }
+
+    /**
+     * Called when properties change.
+     */
+    public static void invalidateSshUtil() {
+        LOGGER.info("nulling out SshUtil");
+        sshUtil = null;
     }
 
     public void disposeComponent() {
