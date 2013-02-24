@@ -29,6 +29,7 @@ public class SshUtil {
     private String destRoot;
     private String srcRoot;
     private int port;
+    private ChannelSftp sftp;
 
     public SshUtil(Properties props) {
         username = props.getProperty(USERNAME);
@@ -44,19 +45,13 @@ public class SshUtil {
         LOGGER.info("destRoot: " + destRoot);
         LOGGER.info("srcRoot: " + srcRoot);
         LOGGER.info("port: " + port);
+
+        setupSftpChannel();
     }
 
-    public void copyFile(InputStream is, String path) {
-        if(path.indexOf(srcRoot)==-1) {
-            // do nothing
-            LOGGER.info("skipping this file: " + path + "; not in srcRoot path: " + srcRoot);
-            return;
-        }
-        String destFile = destRoot + path.substring(srcRoot.length());
-        LOGGER.info("copying file: " + path);
-        JSch jsch = new JSch();
-
+    private void setupSftpChannel() {
         try {
+            JSch jsch = new JSch();
             LOGGER.info("jsch.getSession");
             Session session = jsch.getSession(username, host, port);
             java.util.Properties config = new java.util.Properties();
@@ -71,26 +66,53 @@ public class SshUtil {
             LOGGER.info("channel.connect");
             channel.connect();
 
-            ChannelSftp sftp = (ChannelSftp)channel;
+            // "Cache" the SFTP connection
+            sftp = (ChannelSftp)channel;
+        } catch (JSchException e) {
+            LOGGER.info("JSchException: " + e.getMessage());
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 
+    public void copyFile(InputStream is, String path) {
+        if(path.indexOf(srcRoot)==-1) {
+            // do nothing
+            LOGGER.info("skipping this file: " + path + "; not in srcRoot path: " + srcRoot);
+            return;
+        }
+        String destFile = destRoot + path.substring(srcRoot.length());
+        LOGGER.info("copying file: " + path);
+
+        testConnectionAndSetupIfNecessary();
+
+        try {
             // Validate remote destination path.
             ensureDestPathExists(sftp, destFile);
 
             LOGGER.info("sftp.put");
             sftp.put(is, destFile);
-            LOGGER.info("sftp.disconnect");
-            sftp.disconnect();
+
+            // Don't disconnect with sftp.disconnect();
+
             LOGGER.info("is.close");
             is.close();
-        } catch (JSchException e) {
-            LOGGER.info("JSchException: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SftpException e) {
             LOGGER.info("SftpException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
             LOGGER.info("IOException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    private void testConnectionAndSetupIfNecessary() {
+        if(sftp!=null) {
+            try {
+                sftp.ls("/");
+            } catch (SftpException e) {
+                LOGGER.info("Channel disconnected?  Re-establishing SFTP channel...");
+                setupSftpChannel();
+            }
         }
     }
 

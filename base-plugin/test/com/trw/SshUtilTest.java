@@ -27,6 +27,22 @@ public class SshUtilTest {
     }
 
     @Test
+    public void testMultipleCopies() throws IOException {
+        FileInputStream fis = new FileInputStream("intellij-sftp.properties");
+        Properties props = new Properties();
+        props.load(fis);
+
+
+        SshUtil sshUtil = new SshUtil(props);
+        String path;
+
+        path = "/Container.jsp";
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(SshUtil.SRC_ROOT) + path);
+        path = "/js/cce/mvc-base.js";
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(SshUtil.SRC_ROOT) + path);
+    }
+
+    @Test
     public void testCopyWithSubdir() throws IOException {
         FileInputStream fis = new FileInputStream("intellij-sftp.properties");
         Properties props = new Properties();
