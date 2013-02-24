@@ -52,12 +52,14 @@ public class ConfigSettings implements Configurable {
 
     private void loadFieldsFromProperties() {
         Properties props = ConfigSettingsHelper.getConfigProperties();
-        usernameField.setText(props.getProperty(ConfigSettingsHelper.USERNAME));
-        passwordField.setText(props.getProperty(ConfigSettingsHelper.PASSWORD));
-        hostField.setText(props.getProperty(ConfigSettingsHelper.HOST));
-        destinationRootField.setText(props.getProperty(ConfigSettingsHelper.DEST_ROOT));
-        sourceRootField.setText(props.getProperty(ConfigSettingsHelper.SRC_ROOT));
-        portField.setText(props.getProperty(ConfigSettingsHelper.PORT));
+        if(props!=null) {
+            usernameField.setText(props.getProperty(ConfigSettingsHelper.USERNAME));
+            passwordField.setText(props.getProperty(ConfigSettingsHelper.PASSWORD));
+            hostField.setText(props.getProperty(ConfigSettingsHelper.HOST));
+            destinationRootField.setText(props.getProperty(ConfigSettingsHelper.DEST_ROOT));
+            sourceRootField.setText(props.getProperty(ConfigSettingsHelper.SRC_ROOT));
+            portField.setText(props.getProperty(ConfigSettingsHelper.PORT));
+        }
     }
 
     private JComponent createPanel() {
