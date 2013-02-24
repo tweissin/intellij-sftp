@@ -23,7 +23,31 @@ public class SshUtilTest {
         String path = "/Container.jsp";
 
         SshUtil sshUtil = new SshUtil(props);
-        sshUtil.copyFile(getInputStream(props, path), path);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(SshUtil.SRC_ROOT) + path);
+    }
+
+    @Test
+    public void testCopyWithSubdir() throws IOException {
+        FileInputStream fis = new FileInputStream("intellij-sftp.properties");
+        Properties props = new Properties();
+        props.load(fis);
+
+        String path = "/js/cce/mvc-base.js";
+
+        SshUtil sshUtil = new SshUtil(props);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(SshUtil.SRC_ROOT) + path);
+    }
+
+    @Test
+    public void testCopyFileWeDontCareAbout() throws IOException {
+        FileInputStream fis = new FileInputStream("intellij-sftp.properties");
+        Properties props = new Properties();
+        props.load(fis);
+
+        String path = "/js/cce/mvc-base.js";
+
+        SshUtil sshUtil = new SshUtil(props);
+        sshUtil.copyFile(getInputStream(props, path), "/tmp/" + path);
     }
 
     private InputStream getInputStream(Properties props, String filename) throws FileNotFoundException {

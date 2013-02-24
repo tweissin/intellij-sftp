@@ -19,6 +19,7 @@ import java.io.InputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class TextBoxes extends AnAction {
+    private static Logger LOGGER = new Logger();
 
     // If you register the action from Java code, this constructor is used to set the menu item name
     // (optionally, you can specify the menu description and an icon to display next to the menu item).
@@ -60,42 +61,38 @@ public class TextBoxes extends AnAction {
         JSch jsch = new JSch();
 
         try {
-            log("jsch.getSession");
+            LOGGER.info("jsch.getSession");
             Session session = jsch.getSession(username, host, port);
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
-            log("session.setPassword");
+            LOGGER.info("session.setPassword");
             session.setPassword(password);
-            log("session.connect");
+            LOGGER.info("session.connect");
             session.connect();
-            log("session.openChannel");
+            LOGGER.info("session.openChannel");
             Channel channel = session.openChannel("sftp");
-            log("channel.connect");
+            LOGGER.info("channel.connect");
             channel.connect();
-            log("getInputStream");
+            LOGGER.info("getInputStream");
             ChannelSftp sftp = (ChannelSftp)channel;
             InputStream is = getInputStream(localFile);
-            log("sftp.put");
+            LOGGER.info("sftp.put");
             sftp.put(is, destPath);
-            log("sftp.disconnect");
+            LOGGER.info("sftp.disconnect");
             sftp.disconnect();
-            log("is.close");
+            LOGGER.info("is.close");
             is.close();
         } catch (JSchException e) {
-            log("JSchException: " + e.getMessage());
+            LOGGER.info("JSchException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SftpException e) {
-            log("SftpException: " + e.getMessage());
+            LOGGER.info("SftpException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            log("IOException: " + e.getMessage());
+            LOGGER.info("IOException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-    }
-
-    private static void log(String msg) {
-        OnFileSaveComponent.logSomething(msg);
     }
 
     private InputStream getInputStream(String filename) {

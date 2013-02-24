@@ -46,11 +46,14 @@ public class SshUtil {
         LOGGER.info("port: " + port);
     }
 
-
     public void copyFile(InputStream is, String path) {
-        String destPath = destRoot + path;
+        if(path.indexOf(srcRoot)==-1) {
+            // do nothing
+            LOGGER.info("skipping this file: " + path + "; not in srcRoot path: " + srcRoot);
+            return;
+        }
+        String destFile = destRoot + path.substring(srcRoot.length());
         LOGGER.info("copying file: " + path);
-        int port = 3022;
         JSch jsch = new JSch();
 
         try {
@@ -67,10 +70,14 @@ public class SshUtil {
             Channel channel = session.openChannel("sftp");
             LOGGER.info("channel.connect");
             channel.connect();
-            LOGGER.info("getInputStream");
+
             ChannelSftp sftp = (ChannelSftp)channel;
+
+            // Validate remote destination path.
+            ensureDestPathExists(sftp, destFile);
+
             LOGGER.info("sftp.put");
-            sftp.put(is, destPath);
+            sftp.put(is, destFile);
             LOGGER.info("sftp.disconnect");
             sftp.disconnect();
             LOGGER.info("is.close");
@@ -85,5 +92,42 @@ public class SshUtil {
             LOGGER.info("IOException: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+    }
+
+    private void ensureDestPathExists(ChannelSftp sftp, String destFile) throws SftpException {
+        String destPath = destFile.substring(0,destFile.lastIndexOf("/"));
+        LOGGER.info("destpath=" + destPath);
+
+        try {
+            sftp.ls(destPath);
+        } catch (SftpException e) {
+            // Start at root and keep making dirs until we get to the end
+            LOGGER.info("no such path: " + destPath + "; " + e.getMessage());
+            mkRemoteDirs(sftp, destRoot, destFile);
+        }
+    }
+
+    /**
+     * Recursively creates directories given the specified path.
+     */
+    private static void mkRemoteDirs(ChannelSftp sftp, String rootDir, String destFile) throws SftpException {
+        int startPos = rootDir.length() + 1;
+        int endPos = destFile.indexOf("/", startPos);
+        if(endPos==-1) {
+            return;
+        }
+        String nextDir = destFile.substring(startPos, endPos);
+        String dirToCreate = rootDir + "/" + nextDir;
+        try {
+            sftp.mkdir(dirToCreate);
+            LOGGER.info("Created dir: " + dirToCreate);
+        } catch(SftpException e) {
+            LOGGER.info("Dir already exists: " + dirToCreate);
+        }
+
+        // find out if at last slash
+        endPos = destFile.indexOf("/", endPos);
+        String newRootDir = destFile.substring(0,endPos);
+        mkRemoteDirs(sftp, newRootDir, destFile);
     }
 }

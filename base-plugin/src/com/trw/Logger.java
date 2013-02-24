@@ -19,9 +19,13 @@ public class Logger {
         LOGGER.info(message);
     }
 
+    public void error(String message) {
+        log("error", message);
+        LOGGER.error(message);
+    }
     private void log(String level, String msg) {
         try {
-            FileWriter pw = new FileWriter("/Users/tweissin/log.txt", true);
+            FileWriter pw = new FileWriter(System.getProperty("user.home") + "/intellij-sftp.log", true);
             String formattedMsg = new Date().toString() + " [" + level + "] " + msg;
             pw.write(formattedMsg + "\n");
             System.out.println(formattedMsg);
