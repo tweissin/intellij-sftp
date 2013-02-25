@@ -19,7 +19,10 @@ Logging goes to your home directory as "intellij-sftp.log".
 
 Where to get it:
 ================
-Either download a version from here https://github.com/tweissin/intellij-sftp/blob/master/release/base-plugin.zip
+Either download a version from here 
+
+	https://github.com/tweissin/intellij-sftp/blob/master/release/base-plugin.zip?raw=true
+
 or configure IntelliJ to allow you to build plugins, and build it.
 
 Then go to IntelliJ > Preferences > Plugins > Install Plugin From Disk > and choose the ZIP file.  You will be 
