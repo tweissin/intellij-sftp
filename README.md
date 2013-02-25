@@ -21,7 +21,7 @@ Where to get it:
 ================
 Either download a version from here 
 
-	https://github.com/tweissin/intellij-sftp/blob/master/release/base-plugin.zip?raw=true
+https://github.com/tweissin/intellij-sftp/blob/master/release/base-plugin.zip?raw=true
 
 or configure IntelliJ to allow you to build plugins, and build it.
 
