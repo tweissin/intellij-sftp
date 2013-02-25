@@ -4,6 +4,8 @@ intellij-sftp
 This allows you to configure a single path on your system that will save to a 
 remote SFTP location whenever you save a file locally.
 
+You can configure it in Preferences > SFTP.
+
 Example properties file:
 
 	ssh.host=<your-host>
@@ -27,6 +29,8 @@ or configure IntelliJ to allow you to build plugins, and build it.
 
 Then go to IntelliJ > Preferences > Plugins > Install Plugin From Disk > and choose the ZIP file.  You will be 
 prompted to restart after installing it.
+
+After installing it, configure it using the Preferences page.
 
 Improvements to make:
 =====================
