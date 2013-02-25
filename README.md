@@ -17,6 +17,14 @@ This file is stored in your home directory as "intellij-sftp.properties".
 
 Logging goes to your home directory as "intellij-sftp.log".  
 
+Where to get it:
+================
+Either download a version from here https://github.com/tweissin/intellij-sftp/blob/master/base-plugin/release/base-plugin.zip
+or configure IntelliJ to allow you to build plugins, and build it.
+
+Then go to IntelliJ > Preferences > Plugins > Install Plugin From Disk > and choose the ZIP file.  You will be 
+prompted to restart after installing it.
+
 Improvements to make:
 =====================
 * Logging in this release attempts to use log4j, but I haven't worked it out completely yet.  
