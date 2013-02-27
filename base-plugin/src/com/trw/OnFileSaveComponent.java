@@ -9,7 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import com.trw.com.trw.settings.ConfigSettingsHelper;
+import com.trw.settings.ConfigSettingsHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;

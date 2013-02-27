@@ -1,7 +1,7 @@
 package com.trw;
 
 import com.jcraft.jsch.*;
-import com.trw.com.trw.settings.ConfigSettingsHelper;
+import com.trw.settings.ConfigSettingsHelper;
 
 import java.io.IOException;
 import java.io.InputStream;

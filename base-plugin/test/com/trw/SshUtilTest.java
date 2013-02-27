@@ -1,6 +1,6 @@
 package com.trw;
 
-import com.trw.com.trw.settings.ConfigSettingsHelper;
+import com.trw.settings.ConfigSettingsHelper;
 import org.junit.Test;
 
 import java.io.*;

@@ -1,17 +1,16 @@
 <idea-plugin version="2">
-  <id>com.yourcompany.unique.plugin.id</id>
-  <name>Tom Base Plugin</name>
+  <id>com.trw.sftp.plugin</id>
+  <name>SFTP File Sync Plugin</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="tweissin@gmail.com" url="http://github.com/tweissin">Tom Weissinger</vendor>
 
   <description><![CDATA[
-      Base Plugin.<br>
-      <small>most HTML tags may be used</small>
+      SFTP File Sync Plugin.<br>
+      <small>As you save files, the file is saved automatically to a remote SFTP location.</small>
       ]]></description>
 
   <change-notes><![CDATA[
       Nothing new going on...<br>
-      <small>most HTML tags may be used</small>
       ]]>
   </change-notes>
 
@@ -37,6 +36,6 @@
     <actions>
     </actions>
   <extensions defaultExtensionNs="com.intellij">
-      <applicationConfigurable implementation="com.trw.com.trw.settings.ConfigSettings"></applicationConfigurable>
+      <applicationConfigurable implementation="com.trw.settings.ConfigSettings"></applicationConfigurable>
   </extensions>
 </idea-plugin>

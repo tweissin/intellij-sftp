@@ -1,4 +1,4 @@
-package com.trw.com.trw.settings;
+package com.trw.settings;
 
 import com.trw.Logger;
 
