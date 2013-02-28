@@ -9,7 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import com.trw.settings.ConfigSettingsHelper;
+import com.trw.settings.ConfigSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
@@ -51,14 +51,11 @@ public class OnFileSaveComponent implements ApplicationComponent {
                     @Override
                     public void beforeDocumentSaving(Document document) {
                         VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+                        LOGGER.debug("beforeDocumentSaving: " + file.getCanonicalPath());
                         ByteArrayInputStream is = new ByteArrayInputStream(document.getText().getBytes());
-                        LOGGER.info("About to copy file using OnFileSaveComponent: " + file.getCanonicalPath());
                         sshUtil = getSshUtil();
                         if(sshUtil!=null) {
                             sshUtil.copyFile(is, file.getCanonicalPath());
-                            LOGGER.info("Successfully copied file: " + file.getCanonicalPath());
-                        } else {
-                            LOGGER.error("Couldn't copy file: " + file.getCanonicalPath());
                         }
                     }
                 });
@@ -66,7 +63,7 @@ public class OnFileSaveComponent implements ApplicationComponent {
 
     private SshUtil getSshUtil() {
         if(sshUtil==null) {
-            Properties props = ConfigSettingsHelper.getConfigProperties();
+            Properties props = ConfigSettings.getConfigProperties();
             if(props==null) {
                 LOGGER.error("Problem reading properties...");
                 return null;

@@ -1,6 +1,6 @@
 package com.trw;
 
-import com.trw.settings.ConfigSettingsHelper;
+import com.trw.settings.ConfigSettings;
 import org.junit.Test;
 
 import java.io.*;
@@ -24,7 +24,7 @@ public class SshUtilTest {
         String path = "/Container.jsp";
 
         SshUtil sshUtil = new SshUtil(props);
-        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettingsHelper.SRC_ROOT) + path);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettings.SRC_ROOT) + path);
     }
 
     @Test
@@ -38,9 +38,9 @@ public class SshUtilTest {
         String path;
 
         path = "/Container.jsp";
-        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettingsHelper.SRC_ROOT) + path);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettings.SRC_ROOT) + path);
         path = "/js/cce/mvc-base.js";
-        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettingsHelper.SRC_ROOT) + path);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettings.SRC_ROOT) + path);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class SshUtilTest {
         String path = "/js/cce/mvc-base.js";
 
         SshUtil sshUtil = new SshUtil(props);
-        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettingsHelper.SRC_ROOT) + path);
+        sshUtil.copyFile(getInputStream(props, path), props.getProperty(ConfigSettings.SRC_ROOT) + path);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class SshUtilTest {
     }
 
     private InputStream getInputStream(Properties props, String filename) throws FileNotFoundException {
-        String srcRoot = props.getProperty(ConfigSettingsHelper.SRC_ROOT);
+        String srcRoot = props.getProperty(ConfigSettings.SRC_ROOT);
         String srcFilename = srcRoot + filename;
         FileInputStream is = new FileInputStream(srcFilename);
         return is;

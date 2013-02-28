@@ -10,7 +10,8 @@
       ]]></description>
 
   <change-notes><![CDATA[
-      Nothing new going on...<br>
+      Cleaned up settings dialog<br>
+      Optimized SFTP connection so it is only established when necessary.
       ]]>
   </change-notes>
 

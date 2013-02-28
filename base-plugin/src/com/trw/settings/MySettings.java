@@ -12,6 +12,8 @@ import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Properties;
@@ -31,8 +33,8 @@ public class MySettings{
     private JSpinner portField;
     private JTextField sourceRootField;
     private JButton sourceRootChooser;
+    private JCheckBox strictHostKeyCheckingCheckBox;
     private boolean isModified;
-    private static final int DEFAULT_SFTP_PORT = 22;
 
     public MySettings() {
         LOGGER.info("MySettings()");
@@ -57,6 +59,14 @@ public class MySettings{
         sourceRootField.getDocument().addDocumentListener(docl);
         destinationRootField.getDocument().addDocumentListener(docl);
         passwordField.getDocument().addDocumentListener(docl);
+        strictHostKeyCheckingCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if(itemEvent.getStateChange()==ItemEvent.SELECTED) {
+                    isModified = true;
+                }
+            }
+        });
 
         JComponent comp = portField.getEditor();
         JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
@@ -70,7 +80,7 @@ public class MySettings{
             }
         });
 
-        portField.setModel(new SpinnerNumberModel(DEFAULT_SFTP_PORT,0,Integer.MAX_VALUE,1));
+        portField.setModel(new SpinnerNumberModel(ConfigSettings.DEFAULT_SFTP_PORT,0,Integer.MAX_VALUE,1));
         portField.setEditor(new JSpinner.NumberEditor(portField,"####"));
         sourceRootChooser.addActionListener(new ActionListener() {
             @Override
@@ -118,27 +128,30 @@ public class MySettings{
 
     public void loadFieldsFromProperties() {
         LOGGER.info("loadFieldsFromProperties");
-        Properties props = ConfigSettingsHelper.getConfigProperties();
+        Properties props = ConfigSettings.getConfigProperties();
         if(props!=null) {
-            usernameField.setText(props.getProperty(ConfigSettingsHelper.USERNAME));
-            passwordField.setText(props.getProperty(ConfigSettingsHelper.PASSWORD));
-            hostField.setText(props.getProperty(ConfigSettingsHelper.HOST));
-            destinationRootField.setText(props.getProperty(ConfigSettingsHelper.DEST_ROOT));
-            sourceRootField.setText(props.getProperty(ConfigSettingsHelper.SRC_ROOT));
-            portField.setValue(Integer.valueOf(props.getProperty(ConfigSettingsHelper.PORT)));
-
+            usernameField.setText(props.getProperty(ConfigSettings.USERNAME));
+            passwordField.setText(props.getProperty(ConfigSettings.PASSWORD));
+            hostField.setText(props.getProperty(ConfigSettings.HOST));
+            destinationRootField.setText(props.getProperty(ConfigSettings.DEST_ROOT));
+            sourceRootField.setText(props.getProperty(ConfigSettings.SRC_ROOT));
+            portField.setValue(Integer.valueOf(props.getProperty(ConfigSettings.PORT)));
+            strictHostKeyCheckingCheckBox.setSelected(Boolean.valueOf(
+                    props.getProperty(ConfigSettings.STRICT_HOST_KEY_CHECKING,
+                    String.valueOf(ConfigSettings.DEFAULT_STRICT_HOST_KEY_CHECKING))));
         }
     }
 
     public void saveFieldsToProperties() {
         Properties props = new Properties();
-        updatePropertyFromField(props, ConfigSettingsHelper.USERNAME, usernameField);
-        updatePropertyFromField(props, ConfigSettingsHelper.PASSWORD, passwordField);
-        updatePropertyFromField(props, ConfigSettingsHelper.HOST, hostField);
-        updatePropertyFromField(props, ConfigSettingsHelper.DEST_ROOT, destinationRootField);
-        updatePropertyFromField(props, ConfigSettingsHelper.SRC_ROOT, sourceRootField);
-        props.setProperty(ConfigSettingsHelper.PORT, portField.getValue().toString());
-        ConfigSettingsHelper.saveConfigProperties(props);
+        updatePropertyFromField(props, ConfigSettings.USERNAME, usernameField);
+        updatePropertyFromField(props, ConfigSettings.PASSWORD, passwordField);
+        updatePropertyFromField(props, ConfigSettings.HOST, hostField);
+        updatePropertyFromField(props, ConfigSettings.DEST_ROOT, destinationRootField);
+        updatePropertyFromField(props, ConfigSettings.SRC_ROOT, sourceRootField);
+        props.setProperty(ConfigSettings.PORT, portField.getValue().toString());
+        props.setProperty(ConfigSettings.STRICT_HOST_KEY_CHECKING, strictHostKeyCheckingCheckBox.isSelected()?"true":"false");
+        ConfigSettings.saveConfigProperties(props);
         OnFileSaveComponent.invalidateSshUtil();
         LOGGER.info("isModified=false");
         isModified = false;

@@ -3,3 +3,4 @@
 base-plugin/out
 workspace.xml
 tasks.xml
+**/.idea/libraries
