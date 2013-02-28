@@ -37,9 +37,12 @@ Improvements to make:
 * Logging in this release attempts to use log4j, but I haven't worked it out completely yet.  
   So for now, the log is located in your homedir as intellij-sftp.log
 
-* The settings dialog isn't pretty and could be formatted better.
-
 * What is logged needs to be cleaned up.
 
 * It would be nice to be able to sync both directions, or sync the entire directory structure.
 
+* Settings could be stored in the workspace instead of in the home directory.
+
+* Add support for SSH key file instead of password.
+
+* Make it work on Windows.

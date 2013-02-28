@@ -84,6 +84,7 @@ public class SshUtil {
 
         if(sftp==null) {
             LOGGER.error("sftp is null!? doing nothing");
+            LOGGER.writeToEventLog("not saving file to remote host, check log.  file: " + path);
             return;
         }
 

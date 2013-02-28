@@ -1,5 +1,8 @@
 package com.trw;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.trw.settings.ConfigSettings;
 
 import java.io.FileWriter;
@@ -32,6 +35,10 @@ public class Logger {
     public void error(String message) {
         log("error", message);
         LOGGER.error(message);
+    }
+
+    public void writeToEventLog(String message) {
+        Notifications.Bus.notify(new Notification("SFTP", "SFTP", message, NotificationType.ERROR));
     }
     private void log(String level, String msg) {
         if("debug".equals(level) && !DEBUG) {
