@@ -9,24 +9,28 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultFormatter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
- * User: tweissin
- * Date: 2/25/13
- * Time: 7:33 PM
- * To change this template use File | Settings | File Templates.
+ * Settings for plugin
+ * @author tweissin
  */
 public class MySettings{
     public static Logger LOGGER = new Logger();
     private JPanel panel1;
     private JTextField hostField;
     private JTextField usernameField;
-    private JTextField sourceRootField;
+    private JPanel sourceRootFieldPanel;
     private JTextField destinationRootField;
     private JPasswordField passwordField;
     private JSpinner portField;
+    private JTextField sourceRootField;
+    private JButton sourceRootChooser;
     private boolean isModified;
     private static final int DEFAULT_SFTP_PORT = 22;
 
@@ -68,6 +72,29 @@ public class MySettings{
 
         portField.setModel(new SpinnerNumberModel(DEFAULT_SFTP_PORT,0,Integer.MAX_VALUE,1));
         portField.setEditor(new JSpinner.NumberEditor(portField,"####"));
+        sourceRootChooser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.setProperty("apple.awt.fileDialogForDirectories", "true");
+                FileDialog fileDialog = new FileDialog((Frame)null,"Select source directory");
+                String sourceRoot = sourceRootField.getText();
+                File sourceRootFile = new File(sourceRoot);
+                if(!sourceRootFile.exists()) {
+                    sourceRootFile = new java.io.File(System.getProperty("user.home"));
+                }
+                LOGGER.info("setting cur dir to: " + sourceRootFile);
+
+                fileDialog.setDirectory(sourceRootFile.getAbsolutePath());
+                fileDialog.setFilenameFilter(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File file, String s) {
+                        return file.isDirectory();
+                    }
+                });
+                fileDialog.setVisible(true);
+                sourceRootField.setText(fileDialog.getDirectory());
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -93,17 +120,11 @@ public class MySettings{
         LOGGER.info("loadFieldsFromProperties");
         Properties props = ConfigSettingsHelper.getConfigProperties();
         if(props!=null) {
-            LOGGER.info("load ConfigSettingsHelper.USERNAME");
             usernameField.setText(props.getProperty(ConfigSettingsHelper.USERNAME));
-            LOGGER.info("load ConfigSettingsHelper.PASSWORD");
             passwordField.setText(props.getProperty(ConfigSettingsHelper.PASSWORD));
-            LOGGER.info("load ConfigSettingsHelper.HOST");
             hostField.setText(props.getProperty(ConfigSettingsHelper.HOST));
-            LOGGER.info("load ConfigSettingsHelper.DEST_ROOT");
             destinationRootField.setText(props.getProperty(ConfigSettingsHelper.DEST_ROOT));
-            LOGGER.info("load ConfigSettingsHelper.SRC_ROOT");
             sourceRootField.setText(props.getProperty(ConfigSettingsHelper.SRC_ROOT));
-            LOGGER.info("load ConfigSettingsHelper.PORT");
             portField.setValue(Integer.valueOf(props.getProperty(ConfigSettingsHelper.PORT)));
 
         }
@@ -111,21 +132,13 @@ public class MySettings{
 
     public void saveFieldsToProperties() {
         Properties props = new Properties();
-        LOGGER.info("save ConfigSettingsHelper.USERNAME");
         updatePropertyFromField(props, ConfigSettingsHelper.USERNAME, usernameField);
-        LOGGER.info("save ConfigSettingsHelper.PASSWORD");
         updatePropertyFromField(props, ConfigSettingsHelper.PASSWORD, passwordField);
-        LOGGER.info("save ConfigSettingsHelper.HOST");
         updatePropertyFromField(props, ConfigSettingsHelper.HOST, hostField);
-        LOGGER.info("save ConfigSettingsHelper.DEST_ROOT");
         updatePropertyFromField(props, ConfigSettingsHelper.DEST_ROOT, destinationRootField);
-        LOGGER.info("save ConfigSettingsHelper.SRC_ROOT");
         updatePropertyFromField(props, ConfigSettingsHelper.SRC_ROOT, sourceRootField);
-        LOGGER.info("save ConfigSettingsHelper.portField");
         props.setProperty(ConfigSettingsHelper.PORT, portField.getValue().toString());
-        LOGGER.info("save ConfigSettingsHelper.USERNAME");
         ConfigSettingsHelper.saveConfigProperties(props);
-        LOGGER.info("save ConfigSettingsHelper.invalidateSshUtil");
         OnFileSaveComponent.invalidateSshUtil();
         LOGGER.info("isModified=false");
         isModified = false;
